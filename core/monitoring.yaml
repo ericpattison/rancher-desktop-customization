@@ -196,8 +196,7 @@ spec:
     spec:
       containers:
       - name: otelcol
-        image: otelcol:latest
-        imagePullPolicy: Never
+        image: otel/opentelemetry-collector-contrib:latest
         ports:
         - name: otelcol-http
           containerPort: 4318
