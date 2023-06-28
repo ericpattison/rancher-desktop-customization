@@ -1,0 +1,84 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: observability
+  name: mimir
+data:
+  mimir.yaml: |-
+    target: all,alertmanager,overrides-exporter
+    common:
+      storage:
+        backend: s3
+        s3:
+          endpoint: minio.storage.svc.cluster.local:9000
+          access_key_id: minio
+          secret_access_key: supersecret
+          insecure: true
+          bucket_name: mimir
+    blocks_storage:
+      storage_prefix: blocks
+      tsdb:
+        dir: /data/ingester
+    memberlist:
+      join_members: [mimir]
+    ruler:
+      rule_path: /data/ruler
+      ring:
+        heartbeat_period: 2s
+        heartbeat_timeout: 10s
+    server:
+      log_level: warn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: observability
+  name: mimir
+spec:
+  selector:
+    matchLabels:
+      app: mimir
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mimir
+    spec:
+      containers:
+      - name: mimir
+        image: grafana/mimir
+        args:
+          - "-config.file=/etc/mimir.yaml"
+        ports:
+        - name: mimir
+          containerPort: 9009
+        - name: grpc
+          containerPort: 9095
+        volumeMounts:
+        - name: mimir-config
+          mountPath: /etc/mimir.yaml
+          subPath: mimir.yaml
+      volumes:
+      - name: mimir-config
+        configMap:
+          defaultMode: 420
+          name: mimir
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: observability
+  name: mimir
+spec:
+  selector:
+    app: mimir
+  ports:
+  - protocol: TCP
+    port: 9009
+    targetPort: 9009
+    name: mimir-http
+  - protocol: TCP
+    port: 9095
+    targetPort: 9095
+    name: mimir-grpc
