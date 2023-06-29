@@ -18,6 +18,13 @@ spec:
             name: grafana
             port:
               number: 3000
+      - path: /mimir(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: mimir
+            port:
+              number: 9009
       - path: /telemetry(/|$)(.*)
         pathType: Prefix
         backend:

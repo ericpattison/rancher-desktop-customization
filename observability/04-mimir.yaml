@@ -22,13 +22,14 @@ data:
         dir: /data/ingester
     memberlist:
       join_members: 
-        - mimir:9009
+        - mimir.observability.svc.cluster.local:7946
     ruler:
       rule_path: /data/ruler
       ring:
         heartbeat_period: 2s
         heartbeat_timeout: 10s
     server:
+      http_listen_port: 9009
       log_level: warn
 ---
 apiVersion: apps/v1
@@ -56,6 +57,8 @@ spec:
           containerPort: 9009
         - name: grpc
           containerPort: 9095
+        - name: memberlist
+          containerPort: 7946
         volumeMounts:
         - name: mimir-config
           mountPath: /etc/mimir.yaml
@@ -83,3 +86,7 @@ spec:
     port: 9095
     targetPort: 9095
     name: mimir-grpc
+  - protocol: TCP
+    port: 7946
+    targetPort: 7946
+    name: mimir-memberlist
