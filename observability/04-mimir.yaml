@@ -12,7 +12,7 @@ data:
         backend: s3
         s3:
           endpoint: minio.storage.svc.cluster.local:9000
-          access_key_id: minio
+          access_key_id: mimir
           secret_access_key: supersecret
           insecure: true
           bucket_name: mimir
@@ -21,7 +21,8 @@ data:
       tsdb:
         dir: /data/ingester
     memberlist:
-      join_members: [mimir]
+      join_members: 
+        - mimir:9009
     ruler:
       rule_path: /data/ruler
       ring:

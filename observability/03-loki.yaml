@@ -27,8 +27,8 @@ data:
         s3:
           endpoint: minio.storage.svc.cluster.local:9000
           insecure: true
-          bucketnames: loki-data
-          access_key_id: minio
+          bucketnames: loki
+          access_key_id: loki
           secret_access_key: supersecret
           s3forcepathstyle: true
       ring:
