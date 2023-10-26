@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+  namespace: monitoring
+  labels:
+    app: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger
+  template:
+    metadata:
+      name: jaeger
+      labels:
+        app: jaeger
+    spec:
+      containers:
+      - name: jaeger
+        image: jaegertracing/all-in-one
+        ports:
+        - name: 'thrift'
+          protocol: UDP
+          containerPort: 6831
+        - name: 'thrift-node'
+          protocol: UDP
+          containerPort: 6832
+        - name: 'configs'
+          protocol: TCP
+          containerPort: 5778
+        - name: 'frontend'
+          protocol: TCP
+          containerPort: 16686
+        - name: 'otlp-grpc'
+          protocol: TCP
+          containerPort: 4317
+        - name: 'otlp-http'
+          protocol: TCP
+          containerPort: 4318
+        - name: 'proto'
+          protocol: TCP
+          containerPort: 14250
+        - name: 'thrift-direct'
+          protocol: TCP
+          containerPort: 14268
+        - name: 'zipkin'
+          protocol: TCP
+          containerPort: 9441
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500M
+          limits:
+            cpu: '1'
+            memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+  namespace: monitoring
+  labels:
+    app: jaeger
+spec:
+  selector:
+    app: jaeger
+  ports:
+  - protocol: TCP
+    port: 6831
+    targetPort: 6831
+    name: thrift-compact
+  - protocol: TCP
+    port: 6832
+    targetPort: 6832
+    name: jaeger-node
+  - protocol: TCP
+    port: 5778
+    targetPort: 5778
+    name: configs
+  - protocol: TCP
+    port: 16686
+    targetPort: 16686
+    name: jaeger-frontend
+  - protocol: TCP
+    port: 4317
+    targetPort: 4317
+    name: jaeger-otlp-grpc
+  - protocol: TCP
+    port: 4318
+    targetPort: 4318
+    name: jaeger-otlp-http
+  - protocol: TCP
+    port: 14250
+    targetPort: 14250
+    name: jaeger-proto
+  - protocol: TCP
+    port: 14268
+    targetPort: 14268
+    name: jaeger-thrift-direct
+  - protocol: TCP
+    port: 9411
+    targetPort: 9411
+    name: jaeger-zipkin
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jaeger
+  namespace: monitoring
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "jaeger.lvh.me"
+    http: 
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jaeger
+            port:
+              number: 16686
+---
