@@ -1,5 +1,6 @@
 # Rancher Desktop Customizations
 A set of YAML files to provide a customized kubernetes setup in rancher desktop.
+While this repo is primarily used for my personal rancher desktop, it should be usable with any non-production kubernetes.
 
 ## Ingress Notes
 All ingress resources defined in this setup are defined expecting the use of the lvh.me domain name. For example: (http://grafana.lvh.me)
