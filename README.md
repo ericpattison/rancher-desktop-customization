@@ -52,3 +52,8 @@ Eventing comes with two options depending on what you want to use:
 * [KNative Eventing](https://knative.dev/docs/eventing/)
 
 ## Storage (Coming Soon)
+There are multiple options availble for storage systems to play with:
+* [Minio](https://min.io/) - an S3 compatible database
+* [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?tabs=docker-hub) - an emulator for azure storage accounts
+* [Cosmos Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=docker-linux%2Ccsharp&pivots=api-nosql) - an emulator for cosmos db
+* [MSSQL](https://learn.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver16&pivots=cs1-bash) - an MSSQL Server instance running in a linux container
