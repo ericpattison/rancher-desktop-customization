@@ -38,6 +38,7 @@ kubectl apply -f monitoring/grafana.yaml
 kubectl apply -f monitoring/jaeger.yaml
 kubectl apply -f monitoring/otel.yaml
 kubectl apply -f monitoring/prom.yaml
+kubectl apply -f monitoring/elasticsearch.yaml
 ```
 
 Or just do a full install of the entire suite:
@@ -50,6 +51,18 @@ kubectl apply -f monitoring/
 Eventing comes with two options depending on what you want to use:
 * [AzureEventGridSimulator](https://github.com/pmcilreavy/AzureEventGridSimulator)
 * [KNative Eventing](https://knative.dev/docs/eventing/)
+
+### KNative Eventing
+[KNative Eventing](https://knative.dev/docs/eventing/) is an implementation of the [CloudEvents](https://cloudevents.io/) specification.
+While there are multiple options available for a more advanced setup, I've included only the most basic implementation.
+Installation order matters here, so follow the commands closely:
+
+```shell
+kubectl apply -f eventing/knative/crds.yaml
+kubectl apply -f eventing/knative/core.yaml
+kubectl apply -f eventing/knative/channel.yaml
+kubectl apply -f eventing/knative/broker.yaml
+```
 
 ## Storage (Coming Soon)
 There are multiple options availble for storage systems to play with:

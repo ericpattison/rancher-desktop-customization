@@ -19,6 +19,10 @@ data:
         endpoint: "jaeger.monitoring.svc.cluster.local:4317"
         tls:
           insecure: true
+      elasticsearch:
+        endpoints: [elasticsearch.monitoring.svc.cluster.local:9200]
+        tls:
+          insecure: true
       prometheus:
         endpoint: "0.0.0.0:8889"
     processors:
@@ -32,6 +36,9 @@ data:
           receivers: [otlp]
           processors: [batch]
           exporters: [logging, prometheus]
+        logs:
+          receivers: [otlp]
+          exporters: [logging, elasticsearch]
 ---
 apiVersion: apps/v1
 kind: Deployment
