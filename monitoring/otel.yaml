@@ -9,6 +9,7 @@ metadata:
 data:
   config.yaml: |
     receivers:
+      zipkin:
       otlp:
         protocols:
           grpc:
@@ -20,7 +21,7 @@ data:
         tls:
           insecure: true
       elasticsearch:
-        endpoints: [elasticsearch.monitoring.svc.cluster.local:9200]
+        endpoints: [http://elasticsearch.monitoring.svc.cluster.local:9200]
         tls:
           insecure: true
       prometheus:
@@ -30,7 +31,7 @@ data:
     service:
       pipelines:
         traces:
-          receivers: [otlp]
+          receivers: [zipkin,otlp]
           exporters: [logging, otlp/jaeger]
         metrics:
           receivers: [otlp]
@@ -80,6 +81,13 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        resources:
+          requests:
+            cpu: 500m
+            memory: 200M
+          limits:
+            cpu: '1'
+            memory: 500M
       volumes:
       - configMap:
           defaultMode: 420

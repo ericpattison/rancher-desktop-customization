@@ -195,6 +195,13 @@ spec:
           runAsUser: 65534
           seccompProfile:
             type: RuntimeDefault
+        resources:
+          requests:
+            cpu: 500m
+            memory: 200M
+          limits:
+            cpu: '1'
+            memory: 500M
       serviceAccountName: kube-state-metrics
 ---
 apiVersion: v1

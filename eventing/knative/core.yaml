@@ -772,6 +772,10 @@ metadata:
   annotations:
     knative.dev/example-checksum: "0492ceb0"
 data:
+  backend: "zipkin"
+  zipkin-endpoint: "http://otel.monitoring.svc.cluster.local:9411/api/v2/spans"
+  debug: "true"
+  sample-rate: "0.1"
   _example: |
     ################################
     #                              #
@@ -788,15 +792,15 @@ data:
     # to actually change the configuration.
     #
     # This may be "zipkin" or "none". the default is "none"
-    backend: "none"
+    backend: "zipkin"
 
     # URL to zipkin collector where traces are sent.
     # This must be specified when backend is "zipkin"
-    zipkin-endpoint: "http://zipkin.istio-system.svc.cluster.local:9411/api/v2/spans"
+    zipkin-endpoint: "http://otel.monitoring.svc.cluster.local:9411/api/v2/spans"
 
     # Enable zipkin debug mode. This allows all spans to be sent to the server
     # bypassing sampling.
-    debug: "false"
+    debug: "true"
 
     # Percentage (0-1) of requests to trace
     sample-rate: "0.1"

@@ -47,6 +47,9 @@ kubectl create ns monitoring
 kubectl apply -f monitoring/
 ```
 
+### Elasticsearch considerations
+Elasticearch may have issues starting up by default and may require some adjustment to the rancher-desktop 
+
 ## Eventing (Coming Soon)
 Eventing comes with two options depending on what you want to use:
 * [AzureEventGridSimulator](https://github.com/pmcilreavy/AzureEventGridSimulator)
