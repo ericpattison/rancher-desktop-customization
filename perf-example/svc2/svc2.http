@@ -1,0 +1,6 @@
+@svc2_HostAddress = http://localhost:5279
+
+GET {{svc2_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
