@@ -164,6 +164,35 @@ roleRef:
   name: otel-collector
   apiGroup: rbac.authorization.k8s.io
 ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: otel-lgtm
+  namespace: monitoring
+  labels:
+    type: local
+spec:
+  storageClassName: local-path
+  capacity:
+    storage: 10Gi
+  accessModes:
+  - ReadWriteOnce
+  hostPath:
+    path: "/mnt/wsl/k8s/otel-lgtm"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: otel-lgtm
+  namespace: monitoring
+spec:
+  storageClassName: local-path
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -194,17 +223,33 @@ spec:
           containerPort: 4317
         - name: otel-http
           containerPort: 4318
+        env:
+        - name: GF_PATHS_DATA
+          value: /data/grafana
         resources:
           requests:
             cpu: 100m
-            memory: 1024Mi
+            memory: 4Gi
           limits:
-            memory: 1024Mi
+            cpu: 2000m
+            memory: 4Gi
         volumeMounts:
+        - name: otel-lgtm
+          mountPath: /data/grafana
+          subPath: grafana
+        - name: otel-lgtm
+          mountPath: /loki
+          subPath: loki
+        - name: otel-lgtm
+          mountPath: /data/prometheus
+          subPath: prometheus
         - name: otelcol-config
           mountPath: /otel-lgtm/otelcol-config.yaml
           subPath: otelcol-config.yaml
       volumes:
+      - name: otel-lgtm
+        persistentVolumeClaim:
+          claimName: otel-lgtm
       - name: otelcol-config
         configMap:
           name: otel-lgtm
