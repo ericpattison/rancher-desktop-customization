@@ -11,29 +11,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient<ISvc2, Svc2>();
 
 const string ServiceName = "SVC1";
-Uri OTLP_URI = new Uri("http://lgtm.monitoring.svc.cluster.local:4317");
+Uri OTLP_URI = new Uri("http://otel-lgtm.monitoring.svc.cluster.local:4317");
 
 builder.Logging.AddOpenTelemetry(options => {
     options.SetResourceBuilder(
         ResourceBuilder.CreateDefault()
             .AddService(ServiceName)
-    ).AddConsoleExporter();
+    ).AddConsoleExporter()
+    .AddOtlpExporter(options => options.Endpoint = OTLP_URI);
 });
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(ServiceName))
-    .UseOtlpExporter(OpenTelemetry.Exporter.OtlpExportProtocol.Grpc, OTLP_URI)
     .WithTracing(tracing => {
         tracing.AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddConsoleExporter();
+            .AddConsoleExporter()
+            .AddOtlpExporter(options => options.Endpoint = OTLP_URI);
     })
     .WithMetrics(metrics => {
         metrics.AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddRuntimeInstrumentation()
             .AddProcessInstrumentation()
-            .AddConsoleExporter();
+            .AddConsoleExporter()
+            .AddOtlpExporter(options => options.Endpoint = OTLP_URI);
     });
 
 
