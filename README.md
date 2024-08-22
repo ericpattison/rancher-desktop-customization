@@ -104,6 +104,28 @@ kubectl apply -f eventing/knative/kafka-controller.yaml
 kubectl apply -f eventing/knative/kafka-channel.yaml
 ```
 
+While this setup allows you to use simple channel and subscription setups, there is an optional broker that can be installed on top of channels that allow you to use brokers and triggers on top of channels and subscriptions.
+```shell
+kubectl apply -f eventing/knative/mt-channel-broker.yaml
+```
+
+#### Brokers and Triggers
+[KNative Eventing](https://knative.dev/docs/eventing/) broker and trigger mechanism behaves fairly similar to channels and subscriptions, the biggest advantage that triggers bring to the table is that you can add filters to triggers, only messages that pass the filter will be sent to that triggers service.
+
+As mentioned earlier, if you are using channels, [KNative Eventing](https://knative.dev/docs/eventing/) provides a broker that sits on top of channels.
+
+```shell
+kubectl apply -f eventing/knative/mt-channel-broker.yaml
+```
+
+However, if you are already installing Kafka (or if you want to use RabbitMQ instead), [KNative Eventing](https://knative.dev/docs/eventing/) provides broker implementations that directly utilize that messaging system.
+
+To install the Kafka Broker, you need the same kafka controller installed so if you also have kafka channels setup, you can ignore the first line:
+```shell
+kubectl apply -f eventing/knative/kafka-controller.yaml
+kubectl apply -f eventing/knative/kafka-broker.yaml
+```
+
 ## Storage (Coming Soon)
 There are multiple options availble for storage systems to play with:
 * [Minio](https://min.io/) - an S3 compatible database
