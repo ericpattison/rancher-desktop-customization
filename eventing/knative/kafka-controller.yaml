@@ -21,7 +21,7 @@ metadata:
 data:
   default.topic.partitions: "10"
   default.topic.replication.factor: "3"
-  bootstrap.servers: "my-cluster-kafka-bootstrap.kafka:9092"
+  bootstrap.servers: "single-node-kafka-bootstrap.knative-eventing:9092"
 
 ---
 # Copyright 2021 The Knative Authors
@@ -45,7 +45,7 @@ metadata:
   labels:
     app.kubernetes.io/version: "d641892814ea8d0d70019201018d90da0a298012"
 data:
-  bootstrap.servers: "my-cluster-kafka-bootstrap.kafka:9092"
+  bootstrap.servers: "single-node-kafka-bootstrap.knative-eventing:9092"
 
 ---
 # Copyright 2020 The Knative Authors
