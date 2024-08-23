@@ -98,8 +98,10 @@ to install the In-Memory channel you can run:
 kubectl apply -f eventing/knative/in-memory-channel.yaml
 ```
 
-to install the Kafka Channel you can run:
+The Kafka setup uses a shared Kafka cluster as the backer.
+To install the Kafka Channel you can run:
 ```shell
+kubectl apply -f eventint/knative/kafka-cluster.yaml
 kubectl apply -f eventing/knative/kafka-controller.yaml
 kubectl apply -f eventing/knative/kafka-channel.yaml
 ```
@@ -124,6 +126,20 @@ To install the Kafka Broker, you need the same kafka controller installed so if 
 ```shell
 kubectl apply -f eventing/knative/kafka-controller.yaml
 kubectl apply -f eventing/knative/kafka-broker.yaml
+```
+
+## Samples
+Along with all the infrastructure this repo provides, there are also samples that show different ways applications are built with all of this infrastructure in mind. Samples are organized based on the infrastructure required to execute them.
+
+### Eventing KNative Simple Channel
+This sample requires the KNative eventing system, within that, it doesn't matter what channel implementation you are using, but it does require a channel.
+
+Start by building the two services as containers, and if needed publish them.
+The kubernetes manifest assumes you are using something like rancher-desktop, so it sets the image pull policy to never, you will need to change that if you are using a registry.
+
+```shell
+kubectl create ns samples
+kubectl apply -f samples/eventing/knative/simple-channel/channel-sample.yaml
 ```
 
 ## Storage (Coming Soon)

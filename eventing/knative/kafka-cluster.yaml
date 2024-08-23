@@ -1,7 +1,9 @@
+---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaNodePool
 metadata:
   name: single-node-dual-role
+  namespace: knative-eventing
   labels:
     strimzi.io/cluster: single-node
 spec:
@@ -18,10 +20,12 @@ spec:
         deleteClaim: false
         kraftMetadata: shared
 ---
+
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: single-node
+  namespace: knative-eventing
   annotations:
     strimzi.io/node-pools: enabled
     strimzi.io/kraft: enabled
