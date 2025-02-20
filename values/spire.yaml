@@ -1,0 +1,25 @@
+global:
+  openshift: false
+  spire:
+    recommendations:
+      enabled: true
+    namespaces:
+      create: true
+    ingressControllerType: "ingress-nginx"
+    clusterName: "local"
+    trustDomain: "apio-local.lvh.me"
+    caSubject:
+      country: US
+      organization: Vivint
+      commonName: vivint.com
+spire-server:
+  ingress:
+    enabled: true
+    className: nginx
+spiffe-oidc-discovery-provider:
+  tls:
+    spire:
+      enabled: false
+  ingress:
+    enabled: true
+    className: nginx

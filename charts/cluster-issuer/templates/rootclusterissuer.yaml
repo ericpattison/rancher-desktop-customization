@@ -1,0 +1,10 @@
+{{- if .Values.clusterIssuer.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.clusterIssuer.name }}-ca
+  namespace: cert-manager
+spec:
+  selfSigned: {}
+{{- end }}

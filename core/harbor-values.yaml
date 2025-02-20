@@ -1,8 +1,0 @@
-expose:
-  tls:
-    enabled: false
-  ingress:
-    hosts:
-      core: "harbor.lvh.me"
-    className: "nginx"
-externalURL: "http://harbor.lvh.me"

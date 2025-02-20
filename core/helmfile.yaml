@@ -1,0 +1,61 @@
+repositories:
+- name: ingress-nginx
+  url: https://kubernetes.github.io/ingress-nginx
+- name: jetstack
+  url: https://charts.jetstack.io
+
+helmDefaults:
+  wait: true
+releases:
+- name: ingress-nginx
+  namespace: ingress-nginx
+  createNamespace: true
+  chart: ingress-nginx/ingress-nginx
+  version: 4.11.3
+  hooks:
+  - events:
+    - postuninstall
+    command: "kubectl"
+    args:
+    - delete
+    - ns
+    - ingress-nginx
+- name: cert-manager
+  namespace: cert-manager
+  createNamespace: true
+  chart: jetstack/cert-manager
+  version: 1.16.2
+  values:
+  - ./values/cert-manager.yaml
+  hooks:
+  - events:
+    - postuninstall
+    command: "kubectl"
+    args:
+    - delete
+    - ns
+    - cert-manager
+- name: trust-manager
+  namespace: cert-manager
+  chart: jetstack/trust-manager
+  needs:
+  - cert-manager/cert-manager
+  disableValidation: true
+  values:
+  - ./values/trust-manager.yaml
+- name: clusterissuer
+  chart: ./charts/cluster-issuer
+  disableValidation: true
+  needs:
+  - cert-manager/cert-manager
+  - cert-manager/trust-manager
+- name: hnc
+  namespace: kube-system
+  chart: ./charts/hnc
+  needs:
+  - /clusterissuer
+  disableValidation: true
+- name: platform-system
+  chart: ../charts/namespace
+  needs:
+  - kube-system/hnc

@@ -1,0 +1,23 @@
+repositories:
+- name: prometheus-community
+  url: https://prometheus-community.github.io/helm-charts
+
+helmDefaults:
+  wait: true
+
+releases:
+- name: monitoring-system
+  namespace: platform-system
+  chart: ../charts/namespace
+- name: kube-state-metrics
+  namespace: kube-system
+  chart: prometheus-community/kube-state-metrics
+- name: node-exporter
+  namespace: kube-system
+  chart: prometheus-community/prometheus-node-exporter
+- name: otel-lgtm
+  namespace: monitoring-system
+  createNamespace: true
+  chart: ../charts/otel-lgtm
+  needs:
+  - platform-system/monitoring-system

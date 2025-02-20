@@ -1,0 +1,13 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.cluster.name }}
+  namespace: {{ .Values.cluster.namespace }}
+spec:
+  instances: {{ .Values.cluster.instances }}
+  storage:
+    size: {{ .Values.cluster.storageSize }}
+  bootstrap:
+    initdb:
+      database: keycloak
+      owner: app

@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: perf-test
+spec:
+  template:
+    spec:
+      containers:
+      - name: perf-test
+        image: pivotalrabbitmq/perf-test:latest
+        args:
+        - --uri
+        - "amqp://default_user_PXiJFOSN9dhw3O4fwDP:NO-1EJYLpx8yTLE-WLZJQhvO92OeYw-H@rabbit-cluster.rabbitmq-perf.svc:5672"
+        - -x
+        - "1"
+        - -y
+        - "2"
+        - -u
+        - "throughput-test-1"
+        - -a
+        - --id
+        - "test 1"
+      restartPolicy: Never
+  backoffLimit: 4

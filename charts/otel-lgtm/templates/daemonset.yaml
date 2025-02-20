@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      name: {{ .Release.Name }}
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}
+      containers:
+      - name: otel-lgtm
+        image: grafana/otel-lgtm:0.6.0
+        ports:
+        - name: prometheus
+          containerPort: 9090
+        - name: grafana
+          containerPort: 3000
+        - name: otel-grpc
+          containerPort: 4317
+        - name: otel-http
+          containerPort: 4318
+        env:
+        - name: GF_PATHS_DATA
+          value: /data/grafana
+        resources:
+          requests:
+            cpu: 100m
+            memory: 4Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+        volumeMounts:
+        - name: otel-lgtm
+          mountPath: /data/grafana
+          subPath: grafana
+        - name: otel-lgtm
+          mountPath: /loki
+          subPath: loki
+        - name: otel-lgtm
+          mountPath: /data/prometheus
+          subPath: prometheus
+        - name: otelcol-config
+          mountPath: /otel-lgtm/otelcol-config.yaml
+          subPath: otelcol-config.yaml
+      volumes:
+      - name: otel-lgtm
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}
+      - name: otelcol-config
+        configMap:
+          name: {{ .Release.Name }}

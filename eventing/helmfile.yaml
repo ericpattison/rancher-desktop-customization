@@ -1,0 +1,19 @@
+helmDefaults:
+  wait: true
+  
+releases:
+- name: eventing-system
+  namespace: platform-system
+  chart: ../charts/namespace
+- name: rabbitmq-operator
+  namespace: eventing-system
+  chart: bitnami/rabbitmq-cluster-operator
+  values:
+  - ./rabbitmq-values.yaml
+  needs:
+  - platform-system/eventing-system
+- name: strimzi
+  namespace: eventing-system
+  chart: strimzi/strimzi-kafka-operator
+  needs:
+  - platform-system/eventing-system

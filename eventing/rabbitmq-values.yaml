@@ -1,0 +1,12 @@
+global:
+  security:
+    allowInsecureImages: true
+
+clusterOperator:
+  image:
+    repository: rabbitmqoperator/cluster-operator
+    tag: 2.12.0
+msgTopologyOperator:
+  image:
+    repository: rabbitmqoperator/messaging-topology-operator
+    tag: 1.15.0

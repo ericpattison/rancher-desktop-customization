@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-webhook-server-cert
+  namespace: {{ .Release.Namespace }}
+spec:
+  secretName: {{ .Release.Name}}-webhook-server-cert
+  duration: 2160h
+  renewBefore: 360h
+  subject:
+    organizations:
+    - lvh.me
+  commonName: {{ .Release.Name }}-webhook-service.{{ .Release.Namespace }}.svc
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  dnsNames:
+  - {{ .Release.Name }}-webhook-service.{{ .Release.Namespace }}.svc
+  - {{ .Release.Name }}-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
+  issuerRef:
+    name: lvh-me
+    kind: ClusterIssuer
+    group: cert-manager.io

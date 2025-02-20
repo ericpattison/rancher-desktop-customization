@@ -1,0 +1,135 @@
+repositories:
+- name: ingress-nginx
+  url: https://kubernetes.github.io/ingress-nginx
+- name: jetstack
+  url: https://charts.jetstack.io
+- name: postgresql
+  url: https://cloudnative-pg.github.io/charts
+- name: bitnami
+  url: https://charts.bitnami.com/bitnami
+- name: sealed-secrets
+  url: https://bitnami-labs.github.io/sealed-secrets
+- name: cnpg
+  url: https://cloudnative-pg.github.io/charts
+- name: codecentric
+  url: https://codecentric.github.io/helm-charts
+- name: runix
+  url: https://helm.runix.net
+- name: spiffe
+  url: https://spiffe.github.io/helm-charts-hardened/
+- name: strimzi
+  url: https://strimzi.io/charts/
+helmDefaults:
+  wait: true
+releases:
+- name: ingress-nginx
+  namespace: ingress-nginx
+  createNamespace: true
+  chart: ingress-nginx/ingress-nginx
+  version: 4.11.3
+  hooks:
+  - events:
+    - postuninstall
+    command: "kubectl"
+    args:
+    - delete
+    - ns
+    - ingress-nginx
+- name: cert-manager
+  namespace: cert-manager
+  createNamespace: true
+  chart: jetstack/cert-manager
+  version: 1.16.2
+  values:
+  - ./values/cert-manager.yaml
+  hooks:
+  - events:
+    - postuninstall
+    command: "kubectl"
+    args:
+    - delete
+    - ns
+    - cert-manager
+- name: trust-manager
+  namespace: cert-manager
+  chart: jetstack/trust-manager
+  needs:
+  - cert-manager/cert-manager
+  disableValidation: true
+  values:
+  - ./values/trust-manager.yaml
+- name: clusterissuer
+  chart: ./charts/cluster-issuer
+  disableValidation: true
+  needs:
+  - cert-manager/cert-manager
+  - cert-manager/trust-manager
+- name: hnc
+  namespace: kube-system
+  chart: ./charts/hnc
+  needs:
+  - /clusterissuer
+  disableValidation: true
+- name: platform-system
+  chart: ./charts/namespace
+  needs:
+  - kube-system/hnc
+- name: eventing-system
+  namespace: platform-system
+  chart: ./charts/namespace
+  needs:
+  - /platform-system
+  hooks:
+  - events:
+    - postsync
+- name: rabbitmq-operator
+  namespace: eventing-system
+  chart: bitnami/rabbitmq-cluster-operator
+- name: strimzi
+  namespace: eventing-system
+  chart: strimzi/strimzi-kafka-operator
+# - name: sealed-secrets
+#   namespace: sealed-secrets
+#   chart: sealed-secrets/sealed-secrets
+#   needs:
+#   - /clusterissuer
+# - name: cloudnative-pg
+#   namespace: database-system
+#   createNamespace: true
+#   chart: cnpg/cloudnative-pg
+# - name: keycloak-db
+#   chart: ./charts/cnpg-cluster
+#   namespace: keycloak-system
+#   createNamespace: true
+#   disableValidation: true
+#   values:
+#   - ./values/keycloak-postgres.yaml
+#   needs:
+#   - database-system/cloudnative-pg
+# - name: keycloak
+#   namespace: keycloak-system
+#   chart: codecentric/keycloakx
+#   values:
+#   - ./values/keycloak.yaml
+# - name: pgadmin
+#   namespace: database-system
+#   chart: runix/pgadmin4
+#   values:
+#   - ./values/pgadmin.yaml
+# - name: otel-lgtm
+#   namespace: monitoring-system
+#   chart: ./charts/otel-lgtm
+#   createNamespace: true
+# - name: spire-crds
+#   chart: spiffe/spire-crds
+#   namespace: spiffe-system
+#   createNamespace: true
+# - name: spire
+#   chart: spiffe/spire
+#   namespace: spiffe-system
+#   createNamespace: true
+#   values:
+#   - ./values/spire.yaml
+#   needs:
+#   - spire-crds
+#   disableValidation: true

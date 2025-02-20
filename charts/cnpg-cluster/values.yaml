@@ -1,0 +1,4 @@
+cluster:
+  name: 'postgres-cluster'
+  instances: 3
+  storageSize: 1Gi

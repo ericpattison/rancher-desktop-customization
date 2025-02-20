@@ -1,0 +1,17 @@
+helmDefaults:
+  wait: true
+
+releases:
+- name: projects-system
+  namespace: platform-system
+  chart: ../../charts/namespace
+- name: rabbitmq-perf
+  namespace: projects-system
+  chart: ../../charts/namespace
+  needs:
+  - platform-system/projects-system
+- name: rabbit-cluster
+  namespace: rabbitmq-perf
+  chart: ../../charts/rabbitmq-cluster
+  needs:
+  - projects-system/rabbitmq-perf

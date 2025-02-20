@@ -1,0 +1,17 @@
+helmDefaults:
+  wait: true
+
+releases:
+- name: database-system
+  namespace: platform-system
+  chart: ../charts/namespace
+- name: cloudnative-pg
+  namespace: database-system
+  chart: cnpg/cloudnative-pg
+  needs:
+  - platform-system/database-system
+- name: pgadmin
+  namespace: database-system
+  chart: runix/pgadmin4
+  values:
+  - ./values/pgadmin.yaml

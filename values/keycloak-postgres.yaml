@@ -1,0 +1,3 @@
+cluster:
+  namespace: keycloak-system
+  instances: 1

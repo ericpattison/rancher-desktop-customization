@@ -1,0 +1,9 @@
+{{ if ne .Release.Namespace "default"}}
+apiVersion: hnc.x-k8s.io/v1alpha2
+kind: HierarchyConfiguration
+metadata:
+  name: "hierarchy"
+  namespace: {{ .Release.Name }}
+spec:
+  parent: {{ .Release.Namespace }}
+{{ end }}
